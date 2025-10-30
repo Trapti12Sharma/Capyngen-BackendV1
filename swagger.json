@@ -1,0 +1,174 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Capyngen Lead Mail API",
+    "version": "1.0.0",
+    "description": "This API allows users to submit marketing lead details and automatically send them via email using Nodemailer."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/api/lead": {
+      "post": {
+        "summary": "Send marketing lead form details via email",
+        "description": "Accepts lead form data and sends an email to the configured recipient address.",
+        "tags": ["Lead"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Lead"
+              },
+              "example": {
+                "fullName": "Trapti Sharma",
+                "email": "trapti@example.com",
+                "phone": "9876543210",
+                "city": "Indore",
+                "brandName": "Capyngen",
+                "website": "https://capyngen.com",
+                "businessType": "E-commerce / Online Store",
+                "services": ["Website Design", "SEO (Google Ranking)"],
+                "budget": "₹20,000 – ₹50,000",
+                "bestTime": "11 AM – 4 PM",
+                "notes": "Need consultation about campaign strategy."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email sent successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "ok": true,
+                  "message": "Mail sent successfully ✅"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error (missing required fields)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "ok": false,
+                  "errors": [
+                    { "msg": "Full Name is required", "param": "fullName" }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server or SMTP error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "ok": false,
+                  "message": "Failed to send email"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Lead": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "phone",
+          "city",
+          "brandName",
+          "website",
+          "businessType",
+          "services",
+          "budget",
+          "bestTime"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Trapti Sharma"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "trapti@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "9876543210"
+          },
+          "city": {
+            "type": "string",
+            "example": "Indore"
+          },
+          "brandName": {
+            "type": "string",
+            "example": "Capyngen"
+          },
+          "website": {
+            "type": "string",
+            "example": "https://capyngen.com"
+          },
+          "businessType": {
+            "type": "string",
+            "enum": [
+              "E-commerce / Online Store",
+              "Local Business / Shop",
+              "Clinic / Hospital / Healthcare",
+              "Real Estate / Builder",
+              "Education / Coaching",
+              "Finance / Insurance",
+              "Other"
+            ]
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Social Media Marketing",
+                "Meta (Facebook / Instagram) Ads",
+                "Google Ads",
+                "Website Design",
+                "SEO (Google Ranking)",
+                "Branding & Graphics",
+                "Not Sure — Need Guidance"
+              ]
+            },
+            "example": ["SEO (Google Ranking)", "Website Design"]
+          },
+          "budget": {
+            "type": "string",
+            "enum": [
+              "₹5,000 – ₹20,000",
+              "₹20,000 – ₹50,000",
+              "₹50,000 – ₹1,00,000",
+              "Above ₹1,00,000"
+            ],
+            "example": "₹20,000 – ₹50,000"
+          },
+          "bestTime": {
+            "type": "string",
+            "example": "11 AM – 4 PM"
+          },
+          "notes": {
+            "type": "string",
+            "example": "Need consultation and proposal."
+          }
+        }
+      }
+    }
+  }
+}
