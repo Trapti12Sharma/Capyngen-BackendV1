@@ -5,10 +5,14 @@
     "version": "1.0.0",
     "description": "This API allows users to submit marketing lead details and automatically send them via email using Nodemailer."
   },
-  "servers": [
+   "servers": [
     {
       "url": "http://localhost:5000",
-      "description": "Local Development Server"
+      "description": "Local server"
+    },
+    {
+      "url": "https://capyngen-backendv1-1.onrender.com",
+      "description": "Render deployed server"
     }
   ],
   "paths": {
