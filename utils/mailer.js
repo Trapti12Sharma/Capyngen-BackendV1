@@ -1,43 +1,50 @@
 require("dotenv").config();
-const sgMail = require("@sendgrid/mail");
+const nodemailer = require("nodemailer");
 
-// set SendGrid API key
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Single transporter reused across sends
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST, // smtpout.secureserver.net
+  port: Number(process.env.SMTP_PORT || 465), // 465 or 587
+  secure: String(process.env.SMTP_SECURE) === "true", // true for 465, false for 587
+  auth: {
+    user: process.env.SMTP_USER, // full email
+    pass: process.env.SMTP_PASS, // mailbox password
+  },
+});
 
 /**
- * sendMail - sends an email via SendGrid API.
+ * sendMail - sends an email via GoDaddy SMTP.
  * Automatically uses COMPANY_EMAIL as recipient if 'to' not provided.
  */
 async function sendMail({ to, subject, html, text, replyTo }) {
   const displayName = process.env.MAIL_FROM_NAME || "Capyngen";
   const fromAddress = process.env.SMTP_FROM || process.env.COMPANY_EMAIL;
-  const recipient = to || process.env.COMPANY_EMAIL; // ✅ fallback to COMPANY_EMAIL
+  const recipient = to || process.env.COMPANY_EMAIL;
 
-  const msg = {
+  const mailOptions = {
+    from: { name: displayName, address: fromAddress },
     to: recipient,
-    from: {
-      email: fromAddress,
-      name: displayName,
-    },
     subject,
     text,
     html,
+    ...(replyTo ? { replyTo } : {}),
   };
 
-  if (replyTo) msg.replyTo = replyTo;
-
-  console.log("📧 Sending mail with SendGrid:", {
-    from: msg.from,
-    to: msg.to,
-    subject: msg.subject,
+  console.log("📧 Sending mail via SMTP:", {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_SECURE,
+    from: mailOptions.from,
+    to: mailOptions.to,
+    subject: mailOptions.subject,
   });
 
   try {
-    const [response] = await sgMail.send(msg);
-    console.log("✅ Mail sent:", response.statusCode);
-    return { ok: true, status: response.statusCode };
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Mail sent:", info.messageId);
+    return { ok: true, id: info.messageId };
   } catch (err) {
-    console.error("❌ SendGrid error:", err.response?.body || err.message);
+    console.error("❌ SMTP error:", err?.response || err?.message || err);
     throw err;
   }
 }
