@@ -6,12 +6,15 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
+const connectDB = require("./path/to/connectDB"); // import your connectDB
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
+// Connect to MongoDB before starting server
+connectDB();
+
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
