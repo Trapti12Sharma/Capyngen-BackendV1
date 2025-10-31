@@ -13,7 +13,7 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors({ origin: process.env.CORS_ORIGIN }));
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(rateLimit({ windowMs: 60 * 1000, max: 25 }));
