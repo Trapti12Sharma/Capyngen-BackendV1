@@ -1,6 +1,7 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const { sendMail } = require("../utils/mailer");
+const Lead = require("../models/Lead.js");
 const router = express.Router();
 
 // helper to safely render HTML
@@ -125,6 +126,22 @@ Sent: ${sentAt}
 `;
 
     try {
+      const lead = new Lead({
+        fullName,
+        email,
+        phone,
+        city,
+        brandName,
+        website,
+        businessType,
+        services,
+        budget,
+        bestTime,
+        notes,
+      });
+
+      await lead.save();
+
       await sendMail({
         subject: `[Lead] ${fullName} - ${businessType}`,
         html,
