@@ -143,6 +143,7 @@ Sent: ${sentAt}
       await lead.save();
 
       await sendMail({
+        to: email,
         subject: `[Lead] ${fullName} - ${businessType}`,
         html,
         text,
