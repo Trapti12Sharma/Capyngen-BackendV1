@@ -49,4 +49,15 @@ async function sendMail({ to, subject, html, text, replyTo }) {
   }
 }
 
+(async () => {
+  const response = await sendMail({
+    to: "trapti1212sharma@gmail.com",
+    subject: "Password Reset Request",
+    text: "Click the link below to reset your password.",
+    html: "<p>Click <a href='https://example.com/reset'>here</a> to reset your password.</p>",
+    replyTo: "trapti1212sharma@gmail.com",
+  });
+  console.log("Response OK", response);
+})();
+
 module.exports = { sendMail };
